@@ -46,7 +46,7 @@ pipeline {
 
         stage('Kubernetes Deployment - DEV') {
             steps {
-                withKubeConfig([credentialsId: '$kubernetesCredential']) {
+                withKubeConfig([credentialsId: kubernetesCredential]) {
                     sh "sed -i 's#replace#${registry}:${BUILD_NUMBER}#g' k8s_deployment_service.yaml"
                     sh 'kubectl apply -f k8s_deployment_service.yaml'
                 }
