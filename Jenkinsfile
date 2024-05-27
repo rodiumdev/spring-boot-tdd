@@ -28,7 +28,7 @@ pipeline {
 
         stage('Docker Build and Push') {
             steps {
-                withDockerRegistry([credentialsId: '$registryCredential', url: '']) {
+                withDockerRegistry([credentialsId: $registryCredential, url: '']) {
                     sh 'printenv'
                     sh 'docker build -t $registry:$BUILD_NUMBER .'
                     sh 'docker push $registry:$BUILD_NUMBER'
