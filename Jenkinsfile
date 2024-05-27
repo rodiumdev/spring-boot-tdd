@@ -16,14 +16,36 @@ pipeline {
         }
 
         stage('Unit Tests - JUnit and Jacoco') {
-            when { expression { false } }
             steps {
-                sh 'mvn test'
+                sh 'mvn test -Dgroups=unitaires'
             }
             post {
                 always {
                     junit 'target/surefire-reports/*.xml'
                     jacoco execPattern: 'target/jacoco.exec'
+                }
+            }
+        }
+
+        stage('Service - IntegrationTest') {
+            steps {
+                sh 'mvn test -Dgroups=integrations'
+            }
+        }
+
+        stage('Web - IntegrationTest') {
+            steps {
+                sh 'mvn test -Dgroups=web'
+            }
+        }
+
+        stage('Mutation Tests - PIT') {
+            steps {
+                sh 'mvn org.pitest:pitest-maven:mutationCoverage'
+            }
+            post {
+                always {
+                    pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
                 }
             }
         }
