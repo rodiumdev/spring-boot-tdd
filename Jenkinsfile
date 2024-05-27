@@ -1,30 +1,17 @@
 pipeline {
     agent any
     stages {
-        stage('Build Artefact') {
+        // stage('GitHub') {
+        //     steps {
+        //         // Get some code from a GitHub repository
+        //         git(url: 'https://github.com/rodiumdev/spring-boot-tdd.git', branch: 'main', changelog: true, poll: true)
+        //     }
+        // }
+
+        stage('Build Artifact') {
             steps {
-               sh "mvn clean package -DskipTest=true"
-            }
-        }
-        stage('Lancer les Tests') {
-            steps {
-               sh "mvn test"
-            }
-        }
-        stage('Build & push img') {
-            steps {
-               withDockerRegistry(credentialsId:"dockerhub", url:""){
-                    sh "docker build -t ghostcodebaba/demoboots:$BUILD_NUMBER ."
-                    sh "docker push ghostcodebaba/demoboots:$BUILD_NUMBER"
-               }
-              
-            }
-        }
-        stage('Start container') {
-            steps {
-               sh "docker stop demoboots||true"
-               sh "docker rm demoboots||true"
-               sh "docker run -d --name demoboots -p 8180:8180 ghostcodebaba/demoboots:$BUILD_NUMBER"
+                sh 'mvn clean package -DskipTests=true'
+                archive 'target/*.jar' //so that they can be downloaded later
             }
         }
     }
