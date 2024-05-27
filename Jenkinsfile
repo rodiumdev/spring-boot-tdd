@@ -1,20 +1,15 @@
 pipeline {
     agent any
-    stages {
-        // stage('GitHub') {
-        //     steps {
-        //         // Get some code from a GitHub repository
-        //         git(url: 'https://github.com/rodiumdev/spring-boot-tdd.git', branch: 'main', changelog: true, poll: true)
-        //     }
-        // }
-        environment {
-            registry = 'mm167/demo-devsecops'
-            registryCredential = 'DockerHub'
-        }
+    environment {
+        registry = 'mm167/demo-devsecops'
+        registryCredential = 'DockerHub'
+        kubernetesCredential = 'kubernetes-config'
+    }
 
+    stages {
         stage('Build Artifact') {
             steps {
-                sh 'mvn clean package -DskipTests=true'
+                sh 'mvn clean package -DskipTest=true'
                 archive 'target/*.jar' //so that they can be downloaded later
             }
         }
@@ -49,7 +44,7 @@ pipeline {
 
         stage('Kubernetes Deployment - DEV') {
             steps {
-                withKubeConfig([credentialsId: 'kubernetes-config']) {
+                withKubeConfig([credentialsId: '$kubernetesCredential']) {
                     sh "sed -i 's#replace#${registry}:${BUILD_NUMBER}#g' k8s_deployment_service.yaml"
                     sh 'kubectl apply -f k8s_deployment_service.yaml'
                 }
