@@ -8,7 +8,7 @@ pipeline {
 
     stages {
         stage('Build Artifact') {
-            when { expression { false } }
+            // when { expression { false } }
             steps {
                 sh 'mvn clean package -DskipTest=true'
                 archive 'target/*.jar' //so that they can be downloaded later
@@ -29,6 +29,7 @@ pipeline {
         }
 
         stage('Docker Build and Push') {
+            when { expression { false } }
             steps {
                 withDockerRegistry([credentialsId: registryCredential, url: '']) {
                     sh 'printenv'
@@ -39,12 +40,14 @@ pipeline {
         }
 
         stage('Remove Unused docker image') {
+            when { expression { false } }
             steps {
                 sh "docker rmi $registry:$BUILD_NUMBER"
             }
         }
 
         stage('Kubernetes Deployment - DEV') {
+            when { expression { false } }
             steps {
                 withKubeConfig([credentialsId: kubernetesCredential]) {
                     sh "sed -i 's#replace#${registry}:${BUILD_NUMBER}#g' k8s_deployment_service.yaml"
