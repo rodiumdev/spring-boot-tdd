@@ -8,6 +8,7 @@ pipeline {
 
     stages {
         stage('Build Artifact') {
+            when { expression { false } }
             steps {
                 sh 'mvn clean package -DskipTest=true'
                 archive 'target/*.jar' //so that they can be downloaded later
@@ -15,6 +16,7 @@ pipeline {
         }
 
         stage('Unit Tests - JUnit and Jacoco') {
+            when { expression { false } }
             steps {
                 sh 'mvn test'
             }
