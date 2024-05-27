@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        registry = 'mm167/demo-devsecops'
+        registry = 'ghostcodebaba/demo-devsecops'
         registryCredential = 'DockerHub'
         kubernetesCredential = 'kubernetes-config'
     }
