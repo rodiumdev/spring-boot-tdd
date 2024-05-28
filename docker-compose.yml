@@ -23,6 +23,22 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
+  sonarqube:
+    image: sonarqube:latest
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube-data:/var/lib/sonarqube
+      - sonarqube-logs:/opt/sonarqube/logs
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: true
+      SONARQUBE_JDBC_URL: jdbc:postgresql://192.168.33.10:5432/ghostcode/sonar
+      SONARQUBE_JDBC_USERNAME: ghostcode
+      SONARQUBE_JDBC_PASSWORD: 171201@Monkey
+
 volumes:
   postgres-data:
   pgadmin-data:
+  sonarqube-data:
+  sonarqube-logs:
