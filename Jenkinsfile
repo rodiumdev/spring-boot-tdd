@@ -50,7 +50,7 @@ pipeline {
             }
         }
 
-        stage('Code coverage') {
+        stage('Sonarqube SAST') {
             environment {
                 SCANNER_HOME = tool 'sonar_scanner'
                 PROJECT_KEY = 'spring-boot-tdd'
@@ -59,10 +59,15 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonar_server') {
                     sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=$PROJECT_KEY \
-                            -Dsonar.projectName=$PROJECT_NAME \
-                            -Dsonar.java.coveragePlugin=jacoco \
-                            -Dsonar.jacoco.reportPath=target/jacoco.exec \
-                            -Dsonar.java.binaries=target/classes/ '''
+                        -Dsonar.projectName=$PROJECT_NAME \
+                        -Dsonar.java.coveragePlugin=jacoco \
+                        -Dsonar.jacoco.reportPath=target/jacoco.exec \
+                        -Dsonar.coverage.exclusions=src/test/**/*,src/**/web/**/*,**/Application.java \
+                        -Dsonar.java.binaries=target/classes/ '''
+                }
+
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
